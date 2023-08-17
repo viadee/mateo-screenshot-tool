@@ -54,7 +54,7 @@ Alle u. g. Beschreibungen für Tasten erfordern, dass das Fenster des Tools akti
 
 * Mit gedrückter linker Maustaste können Zonen eingezeichnet werden, die bei der Erkennung ignoriert werden sollen
 
-	* Mit der Taste `U` kann (_nur_) das zuletzt eingezeichnete Rechteck wieder entfernt werden
+	* Mit der Taste `U` kann das zuletzt eingezeichnete Rechteck wieder entfernt werden
 
 * Ein einfacher Klick irgendwo in das Bild öffnet den Speichern-Dialog für exakt den Punkt, auf den gerade geklickt wurde.
 
