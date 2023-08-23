@@ -1,10 +1,13 @@
 # mateo-Screenshot Tool
 
+Mit dem mateo-Screenshot Tool lassen sich bequem Kommandos für den AutoHotkey Treiber für Windows erstellen. 
+Dazu kann über das Werkzeug ein Screenshot aufgenommen werden. Anschließend kann über einen einfachen Click bestimmt werden, an welche Stelle der Aufnahme später im Skript geklickt werden soll. Darüber hinaus können Bereiche festgelegt werden, die bei der Erkennung ignoriert werden sollen.
+
 Das Programm unterscheidet zwischen dem "Zuschneiden"- (engl. "crop") und "Anmerken"- (engl. "annotate") Modus. Es startet immer im Zuschneiden-Modus und wechselt, nach der Auswahl eines Bereichs, auf den das Bildschirmfoto zugeschnitten werden soll, in den Anmerken-Modus. 
 
 ## Startoptionen
 
-Die Parameter werden der Reihe nach aufgelöst, daher ist ihre Reihenfolge wichtig:
+Die Parameter werden der Reihe nach aufgelöst, daher ist die Reihenfolge wichtig. Entweder müssen alle Parameter angegeben werden oder keiner. Die angabe einzelner ausgewählter Parameter ist nicht möglich.
 
 * 1: Wartezeit in Sekunden vor der Aufnahme eines neuen Screenshots (bspw. `2`)
 
@@ -30,6 +33,9 @@ Die Parameter werden der Reihe nach aufgelöst, daher ist ihre Reihenfolge wicht
 
 	* Modus `mateoScript`: Gibt das generierte Klick-Kommando im mateoScript-Format aus
 
+Beim Ausführen von dem Tool werden die eigegebenen Parameter in einer Maske dargestell. Falls keine Parameter eingeben wurden, werden default-Werte verwendet.
+[![Startparameter](src/main/resources/doc/StartScreenshotTool.png)](src/main/resources/doc/StartScreenshotTool.png)
+
 ### Beispielhafter voller Aufruf
 
 `java -cp Screenshot-Tool-<Version>-SNAPSHOT.jar ScreenshotApp 1 1600 900 "C:\Pfad mit Leerzeichen\" "§windowName§" 1 mateoScript`
@@ -52,12 +58,15 @@ Alle u. g. Beschreibungen für Tasten erfordern, dass das Fenster des Tools akti
 
 ### Anmerken-Modus
 
-* Mit gedrückter linker Maustaste können Zonen eingezeichnet werden, die bei der Erkennung ignoriert werden sollen
+* Mit gedrückter linker Maustaste können Zonen eingezeichnet werden, die bei der Erkennung ignoriert werden sollen. Wie eine solche Zone (Bereich in der Farbe Fuchsia gefärbt) aussehen kann ist nachfolgend dargestellt:
+  [![Screenshot mit eingezeichneter Zone](src/main/resources/doc/screenshotWithZone.png)](src/main/resources/doc/screenshotWithZone.png)
 
 	* Mit der Taste `U` kann das zuletzt eingezeichnete Rechteck wieder entfernt werden
 
-* Ein einfacher Klick irgendwo in das Bild öffnet den Speichern-Dialog für exakt den Punkt, auf den gerade geklickt wurde.
-
+* Ein einfacher Klick in das Bild öffnet den Speichern-Dialog für exakt den Punkt, auf den geklickt wurde.
 	* Es wird eine zusätzliche Datei erzeugt, in der der angeklickte Punkt mit einem grünen Kreuz angezeigt wird
-
+  [![Screenshot mit eingezeichneter Zone und geklicktem Punkt](src/main/resources/doc/screenshotWithZoneAndClickPosition.png)](src/main/resources/doc/screenshotWithZoneAndClickPosition.png)
 	* Außerdem erzeugt ein Klick in das Bild den nötigen mateoScript-Befehl, um den gemachten Klick "nachzuahmen". Dieser wird sowohl auf der Kommandozeile ausgegeben, als auch direkt in die Zwischenablage kopiert.
+  Der Befehl könnte dabei wie folgt aussehen:
+  
+  `clickImageWin(WINDOW_NAME = "§windowName§", IMAGE_RELATIVE_PATH = "1692628116287.png", BASEDIR = "C:\SkriptReports", RELATIVE_X = "-660", RELATIVE_Y = "-8")`

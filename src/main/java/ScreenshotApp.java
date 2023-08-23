@@ -193,9 +193,7 @@ public class ScreenshotApp extends JFrame {
         JButton cancelButton = new JButton("Cancel");
 
         continueButton.addActionListener(continueActionListener);
-        cancelButton.addActionListener(actionEvent -> {
-            System.exit(0);
-        });
+        cancelButton.addActionListener(actionEvent -> System.exit(0));
 
         JPanel buttonsPanel = new JPanel();
         FlowLayout flowLayout = new FlowLayout();
@@ -516,9 +514,7 @@ public class ScreenshotApp extends JFrame {
         // Gets triggered on "Enter" key being pressed
         textField.addActionListener(saveActionListener);
 
-        cancelButton.addActionListener(e -> {
-            dialog.dispose();
-        });
+        cancelButton.addActionListener(e -> dialog.dispose());
 
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new FlowLayout());
@@ -563,7 +559,12 @@ public class ScreenshotApp extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            int screenNumber = Integer.parseInt(args[5]);
+            int screenNumber = 0;
+            try {
+                screenNumber = Integer.parseInt(args[5]);
+            }catch (ArrayIndexOutOfBoundsException e){
+                System.out.println("Problem beim Lesen der screenNumber. Wert bleibt default");
+            }
             graphicsConfiguration = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenNumber].getDefaultConfiguration();
 
             ScreenshotApp app = new ScreenshotApp(args);
