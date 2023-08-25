@@ -39,6 +39,7 @@ public class ScreenshotApp extends JFrame {
     private int argScreenNumber;
     private ApplicationState applicationState;
     private CommandOutputMode commandOutputMode;
+    private final Component screenshotApp = this;
 
     private enum CommandOutputMode {
         excel,
@@ -419,6 +420,13 @@ public class ScreenshotApp extends JFrame {
                                     new StringSelection(outputString),
                                     null
                             );
+
+                    JOptionPane.showMessageDialog(screenshotApp,
+                            "Der Befehl wurde in die Zwischenablage kopiert.\n" +
+                                    "Die Screenshots wurden in " + argSaveLocationPath + " gespeichert.",
+                            "Info",
+                            JOptionPane.PLAIN_MESSAGE);
+
                     // Since we only CLICKED, we don't need to handle what happens when we DRAGGED
                     return;
                 }
