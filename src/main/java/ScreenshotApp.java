@@ -116,7 +116,20 @@ public class ScreenshotApp extends JFrame {
         argSaveLocationPath = new JFileChooser().getFileSystemView().getDefaultDirectory().toString();
         argWindowName = "§windowName§";
         commandOutputMode = CommandOutputMode.excel;
-        argScreenNumber = 0;
+        argScreenNumber = getNumberOfDefaultScreen();
+    }
+
+
+    private int getNumberOfDefaultScreen(){
+        int result = 0;
+        GraphicsDevice defaultGraphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        GraphicsDevice[] graphicsDevices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+        for (int i = 0; i < graphicsDevices.length; i++) {
+            if(graphicsDevices[i].equals(defaultGraphicsDevice)){
+                result = i;
+            }
+        }
+        return result;
     }
 
     private String normalizePath(String path) {
@@ -559,13 +572,13 @@ public class ScreenshotApp extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            int screenNumber = 0;
             try {
-                screenNumber = Integer.parseInt(args[5]);
+                int screenNumber = Integer.parseInt(args[5]);
+                graphicsConfiguration = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenNumber].getDefaultConfiguration();
             }catch (ArrayIndexOutOfBoundsException e){
                 System.out.println("Problem beim Lesen der screenNumber. Wert bleibt default");
+                graphicsConfiguration = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
             }
-            graphicsConfiguration = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenNumber].getDefaultConfiguration();
 
             ScreenshotApp app = new ScreenshotApp(args);
             app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

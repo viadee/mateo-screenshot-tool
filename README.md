@@ -17,7 +17,7 @@ Die Parameter werden der Reihe nach aufgelöst, daher ist die Reihenfolge wichti
 
 * 3: Höhe des skalierten Screenshots (bspw. `900`)
 
-	Hinweis: Dürfte in der Regel das 0,5625-fache der Breite (Parameter 2) sein, wenn es sich um einen 16:9-Bildschirm handelt. Das heißt in der  
+	Hinweis: Dürfte in der Regel das 0,5625-fache der Breite (Parameter 2) sein, wenn es sich um einen 16:9-Bildschirm handelt.
 
 * 4: Speicherpfad für die erzeugten Screenshots (bspw. `"C:\Pfad mit Leerzeichen\"`)
 
