@@ -32,4 +32,11 @@
         </plugins>
     </build>
 
+	<distributionManagement>
+		<snapshotRepository>
+		  <id>artifact-registry</id>
+		  <url>artifactregistry://europe-west3-maven.pkg.dev/vtf-cloud/viadee-mateo-snapshot</url>
+		</snapshotRepository>
+	</distributionManagement>         
+
 </project>
