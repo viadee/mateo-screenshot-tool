@@ -73,7 +73,7 @@ public class ScreenshotApp extends JFrame {
         super("ScreenShot App", graphicsConfiguration);
 
         initStartParams(args);
-        showParamsDialog();
+        showParamsDialog(true);
 
         icon = new ImageIcon();
         screenshotLabel = new JLabel(icon);
@@ -141,12 +141,13 @@ public class ScreenshotApp extends JFrame {
         return path.replaceAll("(\\\\+|/+)", "/");
     }
 
-    private void showParamsDialog() {
+    private void showParamsDialog(boolean quitApplicationOnCancel) {
         JDialog dialog = new JDialog(this, "Startparameter", true);
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                System.exit(0);
+                if(quitApplicationOnCancel)
+                    System.exit(0);
             }
         });
 
@@ -359,6 +360,12 @@ public class ScreenshotApp extends JFrame {
                     if (result == JOptionPane.YES_OPTION) {
                         System.exit(0);
                     }
+                }
+
+                int down = KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK;
+                if ((ke.getModifiersEx() & down) == down && (ke.getKeyCode() == KeyEvent.VK_S)){
+                    showParamsDialog(false);
+                    initCropMode(0.2);
                 }
 
                 if (ke.getKeyCode() == KeyEvent.VK_U && !annotatedImageBackups.empty()) {
