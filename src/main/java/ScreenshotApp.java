@@ -1,3 +1,7 @@
+import com.sun.jna.Native;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef;
+
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
@@ -313,8 +317,9 @@ public class ScreenshotApp extends JFrame {
         // Actual taking of the screenshot
         try {
             Rectangle bounds = graphicsConfiguration.getBounds();
+            argWindowName = getCurrentWindowText();
             originalScreenshotImage = new Robot().createScreenCapture(new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height));
-        } catch (AWTException e) {
+        } catch (AWTException | SecurityException e) {
             e.printStackTrace();
         }
 
@@ -328,6 +333,13 @@ public class ScreenshotApp extends JFrame {
         icon.setImage(scaledScreenshotImage);
         screenshotLabel.repaint();
         packCenterAndShowMainWindow(this);
+    }
+
+    private String getCurrentWindowText(){
+        char[] buffer = new char[1024];
+        WinDef.HWND hwnd = User32.INSTANCE.GetForegroundWindow();
+        User32.INSTANCE.GetWindowText(hwnd, buffer, 1024);
+        return Native.toString(buffer);
     }
 
     KeyAdapter createCropModeKeyAdapter() {
@@ -404,15 +416,8 @@ public class ScreenshotApp extends JFrame {
                         return;
                     }
 
-                    String outputString = String.format(
-                            commandOutputMode == CommandOutputMode.mateoscript ?
-                                    "clickImageWin(WINDOW_NAME = \"%s\", IMAGE_RELATIVE_PATH = \"%s\", BASEDIR = \"%s\", RELATIVE_X = \"%s\", RELATIVE_Y = \"%s\")"
-                                    :
-                                    "0\tclickImageWin\t%s\t%s\t%s\t\t\t%s\t%s",
-                            argWindowName, outputFilename, argSaveLocationPath,
-                            e.getPoint().x - center.x, e.getPoint().y - center.y);
-
-                    System.out.println(outputString.replaceAll("\t", "|"));
+                    String outputString = createCommandOutput(e.getPoint().x - center.x, e.getPoint().y - center.y);
+                    System.out.println(outputString);
 
                     Toolkit.getDefaultToolkit()
                             .getSystemClipboard()
@@ -489,6 +494,15 @@ public class ScreenshotApp extends JFrame {
                 screenshotLabel.repaint();
             }
         };
+    }
+
+    private String createCommandOutput(int x, int y){
+        String blankoCommand = commandOutputMode == CommandOutputMode.mateoscript ?
+                "clickImageWin(WINDOW_NAME = \"%s\", IMAGE_RELATIVE_PATH = \"%s\", BASEDIR = \"%s\", RELATIVE_X = \"%s\", RELATIVE_Y = \"%s\")"
+                :
+                "0\tclickImageWin\t%s\t%s\t%s\t\t\t%s\t%s";
+        String outputString = String.format(blankoCommand, argWindowName, outputFilename, argSaveLocationPath, x, y);
+        return outputString.replaceAll("\t", "|");
     }
 
     private void showSaveDialog() {
