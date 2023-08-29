@@ -41,6 +41,7 @@ public class ScreenshotApp extends JFrame {
     private String argSaveLocationPath;
     private String argWindowName;
     private int argScreenNumber;
+    private boolean autoreadWindowName = true;
     private ApplicationState applicationState;
     private CommandOutputMode commandOutputMode;
     private final Component screenshotApp = this;
@@ -180,6 +181,7 @@ public class ScreenshotApp extends JFrame {
 
         JLabel windowNameLabel = new JLabel("Name des Fensters");
         JTextField windowNameTextField = new JTextField();
+        JCheckBox windowNameCheckBox = new JCheckBox("automatisch Erkennen", autoreadWindowName);
         windowNameTextField.setText(argWindowName);
 
         JLabel screenNumberLabel = new JLabel("Nummer des Bildschirms");
@@ -197,6 +199,7 @@ public class ScreenshotApp extends JFrame {
                 argScaledHeight = Integer.parseInt(scaledHeightTextField.getText());
                 argSaveLocationPath = normalizePath(saveLocationPathTextField.getText() + "/");
                 argWindowName = windowNameTextField.getText();
+                autoreadWindowName = windowNameCheckBox.isSelected();
                 commandOutputMode = (CommandOutputMode) commandOutputModeComboBox.getSelectedItem();
                 argScreenNumber = Integer.parseInt(screenNumberTextField.getText());
                 graphicsConfiguration = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[argScreenNumber].getDefaultConfiguration();
@@ -274,6 +277,10 @@ public class ScreenshotApp extends JFrame {
         c.gridy = 4;
         pane.add(windowNameTextField, c);
 
+        c.gridx = 2;
+        c.gridy = 4;
+        pane.add(windowNameCheckBox, c);
+
         c.gridx = 0;
         c.gridy = 5;
         pane.add(screenNumberLabel, c);
@@ -318,7 +325,8 @@ public class ScreenshotApp extends JFrame {
         // Actual taking of the screenshot
         try {
             Rectangle bounds = graphicsConfiguration.getBounds();
-            argWindowName = getCurrentWindowText();
+            if(autoreadWindowName)
+                argWindowName = getCurrentWindowText();
             originalScreenshotImage = new Robot().createScreenCapture(new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height));
         } catch (AWTException | SecurityException e) {
             e.printStackTrace();
