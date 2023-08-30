@@ -1,3 +1,7 @@
+import com.sun.jna.Native;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef;
+
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
@@ -37,6 +41,7 @@ public class ScreenshotApp extends JFrame {
     private String argSaveLocationPath;
     private String argWindowName;
     private int argScreenNumber;
+    private boolean autoreadWindowName = true;
     private ApplicationState applicationState;
     private CommandOutputMode commandOutputMode;
     private final Component screenshotApp = this;
@@ -69,7 +74,7 @@ public class ScreenshotApp extends JFrame {
         super("ScreenShot App", graphicsConfiguration);
 
         initStartParams(args);
-        showParamsDialog();
+        showParamsDialog(true);
 
         icon = new ImageIcon();
         screenshotLabel = new JLabel(icon);
@@ -137,12 +142,13 @@ public class ScreenshotApp extends JFrame {
         return path.replaceAll("(\\\\+|/+)", "/");
     }
 
-    private void showParamsDialog() {
+    private void showParamsDialog(boolean quitApplicationOnCancel) {
         JDialog dialog = new JDialog(this, "Startparameter", true);
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                System.exit(0);
+                if(quitApplicationOnCancel)
+                    System.exit(0);
             }
         });
 
@@ -175,6 +181,7 @@ public class ScreenshotApp extends JFrame {
 
         JLabel windowNameLabel = new JLabel("Name des Fensters");
         JTextField windowNameTextField = new JTextField();
+        JCheckBox windowNameCheckBox = new JCheckBox("automatisch erkennen", autoreadWindowName);
         windowNameTextField.setText(argWindowName);
 
         JLabel screenNumberLabel = new JLabel("Nummer des Bildschirms");
@@ -192,6 +199,7 @@ public class ScreenshotApp extends JFrame {
                 argScaledHeight = Integer.parseInt(scaledHeightTextField.getText());
                 argSaveLocationPath = normalizePath(saveLocationPathTextField.getText() + "/");
                 argWindowName = windowNameTextField.getText();
+                autoreadWindowName = windowNameCheckBox.isSelected();
                 commandOutputMode = (CommandOutputMode) commandOutputModeComboBox.getSelectedItem();
                 argScreenNumber = Integer.parseInt(screenNumberTextField.getText());
                 graphicsConfiguration = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[argScreenNumber].getDefaultConfiguration();
@@ -269,6 +277,10 @@ public class ScreenshotApp extends JFrame {
         c.gridy = 4;
         pane.add(windowNameTextField, c);
 
+        c.gridx = 2;
+        c.gridy = 4;
+        pane.add(windowNameCheckBox, c);
+
         c.gridx = 0;
         c.gridy = 5;
         pane.add(screenNumberLabel, c);
@@ -313,8 +325,10 @@ public class ScreenshotApp extends JFrame {
         // Actual taking of the screenshot
         try {
             Rectangle bounds = graphicsConfiguration.getBounds();
+            if(autoreadWindowName)
+                argWindowName = getCurrentWindowText();
             originalScreenshotImage = new Robot().createScreenCapture(new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height));
-        } catch (AWTException e) {
+        } catch (AWTException | SecurityException e) {
             e.printStackTrace();
         }
 
@@ -328,6 +342,13 @@ public class ScreenshotApp extends JFrame {
         icon.setImage(scaledScreenshotImage);
         screenshotLabel.repaint();
         packCenterAndShowMainWindow(this);
+    }
+
+    private String getCurrentWindowText(){
+        char[] buffer = new char[1024];
+        WinDef.HWND hwnd = User32.INSTANCE.GetForegroundWindow();
+        User32.INSTANCE.GetWindowText(hwnd, buffer, 1024);
+        return Native.toString(buffer);
     }
 
     KeyAdapter createCropModeKeyAdapter() {
@@ -347,6 +368,12 @@ public class ScreenshotApp extends JFrame {
                     if (result == JOptionPane.YES_OPTION) {
                         System.exit(0);
                     }
+                }
+
+                int down = KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK;
+                if ((ke.getModifiersEx() & down) == down && (ke.getKeyCode() == KeyEvent.VK_S)){
+                    showParamsDialog(false);
+                    initCropMode(0.2);
                 }
 
                 if (ke.getKeyCode() == KeyEvent.VK_U && !annotatedImageBackups.empty()) {
@@ -404,15 +431,8 @@ public class ScreenshotApp extends JFrame {
                         return;
                     }
 
-                    String outputString = String.format(
-                            commandOutputMode == CommandOutputMode.mateoscript ?
-                                    "clickImageWin(WINDOW_NAME = \"%s\", IMAGE_RELATIVE_PATH = \"%s\", BASEDIR = \"%s\", RELATIVE_X = \"%s\", RELATIVE_Y = \"%s\")"
-                                    :
-                                    "0\tclickImageWin\t%s\t%s\t%s\t\t\t%s\t%s",
-                            argWindowName, outputFilename, argSaveLocationPath,
-                            e.getPoint().x - center.x, e.getPoint().y - center.y);
-
-                    System.out.println(outputString.replaceAll("\t", "|"));
+                    String outputString = createCommandOutput(e.getPoint().x - center.x, e.getPoint().y - center.y);
+                    System.out.println(outputString);
 
                     Toolkit.getDefaultToolkit()
                             .getSystemClipboard()
@@ -489,6 +509,15 @@ public class ScreenshotApp extends JFrame {
                 screenshotLabel.repaint();
             }
         };
+    }
+
+    private String createCommandOutput(int x, int y){
+        String blankoCommand = commandOutputMode == CommandOutputMode.mateoscript ?
+                "clickImageWin(WINDOW_NAME = \"%s\", IMAGE_RELATIVE_PATH = \"%s\", BASEDIR = \"%s\", RELATIVE_X = \"%s\", RELATIVE_Y = \"%s\")"
+                :
+                "0\tclickImageWin\t%s\t%s\t%s\t\t\t%s\t%s";
+        String outputString = String.format(blankoCommand, argWindowName, outputFilename, argSaveLocationPath, x, y);
+        return outputString.replaceAll("\t", "|");
     }
 
     private void showSaveDialog() {

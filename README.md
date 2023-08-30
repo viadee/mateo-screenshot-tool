@@ -33,7 +33,7 @@ Die Parameter werden der Reihe nach aufgelöst, daher ist die Reihenfolge wichti
 
 	* Modus `mateoScript`: Gibt das generierte Klick-Kommando im mateoScript-Format aus
 
-Beim Ausführen von dem Tool werden die eigegebenen Parameter in einer Maske dargestell. Falls keine Parameter eingeben wurden, werden default-Werte verwendet.
+Beim Ausführen von dem Tool werden die eigegebenen Parameter in einer Maske dargestellt. Falls keine Parameter eingeben wurden, werden default-Werte verwendet.
 [![Startparameter](src/main/resources/doc/StartScreenshotTool.png)](src/main/resources/doc/StartScreenshotTool.png)
 
 ### Beispielhafter voller Aufruf
@@ -51,6 +51,8 @@ Alle u. g. Beschreibungen für Tasten erfordern, dass das Fenster des Tools akti
 * Mit der Taste `N` wird nach dem eingestellten Timeout (s. Parameter 1 oben) einer neuer Screenshot erzeugt. Das Hauptfenster verschwindet dabei, wenn man `N` drückt, um den Wechsel zur/die Anzeige der Applikation, von der ein Screenshot erzeugt werden soll, zu vereinfachen.
 
 * Mit `ESC` kann das Programm beendet werden. Vor dem Beenden des Programms wird nach einer Bestätigung gefragt.
+
+* Mit `Strg + Alt + S` wird eine Maske zum Ändern der Parameter geöffnet.
 
 ### Zuschneiden-Modus
 
