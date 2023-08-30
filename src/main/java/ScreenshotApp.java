@@ -181,7 +181,7 @@ public class ScreenshotApp extends JFrame {
 
         JLabel windowNameLabel = new JLabel("Name des Fensters");
         JTextField windowNameTextField = new JTextField();
-        JCheckBox windowNameCheckBox = new JCheckBox("automatisch Erkennen", autoreadWindowName);
+        JCheckBox windowNameCheckBox = new JCheckBox("automatisch erkennen", autoreadWindowName);
         windowNameTextField.setText(argWindowName);
 
         JLabel screenNumberLabel = new JLabel("Nummer des Bildschirms");
