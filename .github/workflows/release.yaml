@@ -3,7 +3,7 @@ name: Build and Release
 on:
   push:
     branches:
-      - main  # Change this to your default branch if it's not 'main'
+      - main # Change this to your default branch if it's not 'main'
 
 jobs:
   build:
@@ -16,7 +16,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          java-version: '11'  # Change this to your required Java version
+          java-version: "11" # Change this to your required Java version
+          distribution: "temurin" # Specify the JDK distribution (e.g., 'temurin', 'adopt', etc.)
 
       - name: Build with Maven
         run: mvn clean package
